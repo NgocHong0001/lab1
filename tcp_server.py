@@ -1,6 +1,6 @@
 import socket, threading, json
 
-HOST_IP = socket.gethostbyname(socket.gethostname())
+HOST_IP = ""  #listen on all available interfaces
 PORT = 65432
 HOUSE_FILE = "house.json"
 conn_clients = []
@@ -100,7 +100,8 @@ def main():
     s.bind((HOST_IP, PORT)) #bind socket to hostname & port
 
     s.listen() #listen for connections
-    print(f"Server is listening for connections on {HOST_IP}:{PORT}...")
+    print(f"Server is listening for all interfaces on port :{PORT}")
+    print("Server IP:", socket.gethostbyname(socket.gethostname()))
 
     house_state = load_house_state()  #read file when servern starts
     print(f"Current house state: {house_state}\n")
@@ -111,7 +112,7 @@ def main():
       thread_count += 1
       thread_id = thread_count
 
-      print(f"[NEW CLIENT] {addr} connected.")
+      print(f"[NEW CLIENT] {addr} connected.\n")
 
       thread = threading.Thread(target=handle_client, args=(conn, addr, thread_id), daemon=True)
 

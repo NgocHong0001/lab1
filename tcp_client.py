@@ -1,6 +1,6 @@
 import socket, threading
 
-HOST_IP = socket.gethostbyname(socket.gethostname())
+#HOST_IP = socket.gethostbyname(socket.gethostname())
 PORT = 65432
 
 
@@ -8,9 +8,11 @@ PORT = 65432
 #no close() needed when using with statement.
 
 def main():
+  host_ip = input(f"Enter server IP address: ").strip() #get server IP from user
+
   with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.connect((HOST_IP, PORT)) #connect the socket to a server located at a given IP & PORT
-    print(f"Connected to server at {HOST_IP}:{PORT}\n")
+    s.connect((host_ip, PORT)) #connect the socket to a server located at a given IP & PORT
+    print(f"Connected to server at {host_ip}:{PORT}\n")
 
     #listen for Hi message from server
     server_resp = s.recv(1024).decode()

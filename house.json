@@ -1,5 +1,5 @@
 {
-    "light": "on",
+    "light": "off",
     "door": "open",
-    "window": "open"
+    "window": "close"
 }
