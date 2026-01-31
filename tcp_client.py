@@ -20,6 +20,7 @@ def main():
     message = input("-> ") #take input fr. user
 
     while message.lower().strip() != 'bye':
+      
       s.send(message.encode()) #send data to the server (must be encoded to bytes)
 
       response = s.recv(1024).decode() #recv. resp. fr. server & decode it to string

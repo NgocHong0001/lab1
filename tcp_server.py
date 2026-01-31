@@ -1,8 +1,47 @@
-import socket, threading
+import socket, threading, json
 
 HOST_IP = socket.gethostbyname(socket.gethostname())
 PORT = 65432
+HOUSE_FILE = "house.json"
 conn_clients = []
+
+#Read house.json file
+def load_house_state():
+  with open(HOUSE_FILE, 'r') as f:
+    data = json.load(f)
+  return data
+
+#open json file for write
+def new_house_state(state: dict):
+  with open(HOUSE_FILE, 'w') as f:
+    json.dump(state, f, indent=4)
+    print("House state updated: ", state)
+
+#Parse key:value, & upd. json file"
+#returns True if at least 1 valid key was updated.
+def update_house_fr_msg(message: str) -> bool:
+  state = load_house_state()
+  updated = False
+
+#divide key:value pairs by comma
+  parts = message.split(",")
+  for part in parts:
+    part = part.strip()
+    if ":" not in part:
+      continue
+
+    key, value = part.split(":", 1)
+    key = key.strip()
+    value = value.strip()
+
+    if key in state:
+      state[key] = value
+      updated = True
+    
+    if updated:
+      new_house_state(state)
+  return updated
+
 
 def broadcast(message):
   for client in conn_clients:
@@ -34,8 +73,15 @@ def handle_client(conn, addr, thread_id):
             print(f"Connection with {addr} closed by client 'bye' command.")
             break
 
-          response = f"Server received from Client {thread_id}: {text}"
+          updated = update_house_fr_msg(text)
+          if updated:
+            print(f"House state updated from Client {thread_id}: {text}")
+            response = f"House state updated successfully on server from Client {thread_id}."
+          else:
+            response = f"Server received from Client {thread_id}: {text} (no state updates)."
+          
           conn.send(response.encode()) #send data to the client
+
   except ConnectionResetError:
     print(f"Connection with {addr} lost (connection reset).")
 
@@ -56,6 +102,9 @@ def main():
     s.listen() #listen for connections
     print(f"Server is listening for connections on {HOST_IP}:{PORT}...")
 
+    house_state = load_house_state()  #read file when servern starts
+    print(f"Current house state: {house_state}\n")
+
     while True:
       conn, addr = s.accept() #addr = address of client that is connecting, conn = new socket to interact with the client
 
@@ -68,10 +117,6 @@ def main():
 
       thread.start()
       print(f"[ACTIVE CONNECTIONS] {threading.active_count() - 1}") #-1 to not count the main thread
-
-      #conn.close() #close connection with the client CHECKED!!
-    
-    
 
 if __name__ == "__main__":
   main()
