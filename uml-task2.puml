@@ -1,0 +1,31 @@
+@startuml
+class Server {
+  HOST_IP: str
+  PORT: int
+  HOUSE_FILE: str
+  conn_clients: list
+
+  load_house_state()
+  new_house_state(state)
+  update_house_fr_msg(msg)
+  broadcast(message)
+  handle_client(conn, addr, id)
+  main()
+}
+
+class Client {
+  PORT: int
+  host_ip: str
+  main()
+}
+
+class HouseState {
+  light: str
+  door: str
+  window: str
+}
+
+Client --> Server : TCP
+Server --> HouseState : read/write
+Server "1" o-- "*" Socket
+@enduml

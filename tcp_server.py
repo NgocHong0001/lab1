@@ -42,7 +42,7 @@ def update_house_fr_msg(message: str) -> bool:
       new_house_state(state)
   return updated
 
-
+#broadcast a message to all connected clients
 def broadcast(message):
   for client in conn_clients:
     try:
@@ -50,6 +50,7 @@ def broadcast(message):
     except:
       pass #ignore broken connections
 
+#handle client connection
 def handle_client(conn, addr, thread_id):
   print(f"[CLIENT {thread_id}] connected from {addr}.\n")
 

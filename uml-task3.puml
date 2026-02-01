@@ -1,0 +1,21 @@
+@startuml
+class HouseGUI {
+  HOUSE_FILE: str
+  root: object
+  canvas: object
+
+  load_house_state()
+  get_colors(state)
+  draw_house(canvas, state)
+  refresh()
+  main()
+}
+
+class HouseState {
+  light: str
+  door: str
+  window: str
+}
+
+HouseGUI --> HouseState : reads state from JSON
+@enduml
